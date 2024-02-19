@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { UsersService } from './user.service';
 
@@ -30,5 +34,20 @@ export class AuthService {
     return newUser;
   }
 
-  signIn() {}
+  async signIn(email: string, password: string) {
+    const [user] = await this.usersService.find(email);
+    if (!user) {
+      throw new NotFoundException('The user with this address does not exist');
+    }
+    //деструктуризація (беремо весь пароль і сплітим черех ".", так визначаєм саму сіль і хеш)
+    const [salt, storedHash] = user.password.split('.');
+
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    if (storedHash !== hash.toString('hex')) {
+      throw new BadRequestException('Bad password');
+    }
+    return user;
+  }
+  async signOut() {}
 }
