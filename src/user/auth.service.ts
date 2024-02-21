@@ -49,5 +49,4 @@ export class AuthService {
     }
     return user;
   }
-  async signOut() {}
 }
