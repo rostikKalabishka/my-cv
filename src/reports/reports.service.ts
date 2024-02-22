@@ -13,7 +13,7 @@ export class ReportsService {
   createEstimate({ make, model, year, lng, lat, mileage }) {
     return this.repo
       .createQueryBuilder()
-      .select('*')
+      .select('AVG(price)', 'price')
       .where('make = :make', { make: make })
       .andWhere('model = :model', { model: model })
       .andWhere('lng - :model BETWEEN -5 AND 5', { model: lng })
